@@ -1,41 +1,32 @@
 {% extends 'base.html' %}
 
-{% block title %}Mi Perfil — RateMySetup{% endblock %}
+{% block title %}Mi perfil - RateMySetup{% endblock %}
 
 {% block content %}
 <div class="row g-4">
-
-    <!-- Columna izquierda: info del usuario + formulario -->
     <div class="col-lg-4">
-
-        <!-- Tarjeta de perfil -->
-        <div class="card bg-dark mb-4 gamer-card">
+        <div class="card mb-4">
             <div class="card-body text-center py-4">
-                <div class="avatar-circle mx-auto mb-3 text-white">
-                    {{ user.username|first|upper }}
-                </div>
-                <h4 class="fw-bold mb-0">{{ user.username }}</h4>
-                <p class="text-muted small mb-2">{{ user.email }}</p>
-                <span class="badge bg-primary">
-                    <i class="bi bi-pc-display me-1"></i>{{ mis_setups.count }} setup{{ mis_setups.count|pluralize:"s" }}
-                </span>
+                <div class="profile-initial mb-3">{{ user.username|first|upper }}</div>
+                <h1 class="h4 mb-1">{{ user.username }}</h1>
+                {% if user.email %}
+                    <p class="small-note mb-2">{{ user.email }}</p>
+                {% endif %}
+                <p class="small-note mb-0">{{ mis_setups.count }} setup{{ mis_setups.count|pluralize:"s" }} publicado{{ mis_setups.count|pluralize:"s" }}</p>
             </div>
         </div>
 
-        <!-- Formulario nuevo setup -->
-        <div class="card bg-dark gamer-card">
-            <div class="card-header border-secondary">
-                <h5 class="mb-0"><i class="bi bi-plus-circle text-primary me-2"></i>Publicar nuevo Setup</h5>
-            </div>
+        <div class="card">
             <div class="card-body">
+                <h2 class="h5 mb-3">Subir setup</h2>
                 <form method="post" novalidate>
                     {% csrf_token %}
 
                     <div class="mb-3">
-                        <label for="id_titulo" class="form-label fw-semibold">Título</label>
+                        <label for="id_titulo" class="form-label">Titulo</label>
                         <input type="text" name="titulo" id="id_titulo"
-                               class="form-control bg-dark text-light border-secondary {% if form.titulo.errors %}is-invalid{% endif %}"
-                               placeholder="Ej: Mi Setup Gamer 2026"
+                               class="form-control {% if form.titulo.errors %}is-invalid{% endif %}"
+                               placeholder="Ej: escritorio de mi pieza"
                                value="{{ form.titulo.value|default:'' }}">
                         {% if form.titulo.errors %}
                             <div class="invalid-feedback">{{ form.titulo.errors|join:", " }}</div>
@@ -43,72 +34,63 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="id_descripcion" class="form-label fw-semibold">Descripción</label>
+                        <label for="id_descripcion" class="form-label">Descripcion</label>
                         <textarea name="descripcion" id="id_descripcion" rows="3"
-                                  class="form-control bg-dark text-light border-secondary {% if form.descripcion.errors %}is-invalid{% endif %}"
-                                  placeholder="Describe los componentes de tu setup...">{{ form.descripcion.value|default:'' }}</textarea>
+                                  class="form-control {% if form.descripcion.errors %}is-invalid{% endif %}"
+                                  placeholder="Componentes, monitor, escritorio, lo que quieras contar">{{ form.descripcion.value|default:'' }}</textarea>
                         {% if form.descripcion.errors %}
                             <div class="invalid-feedback">{{ form.descripcion.errors|join:", " }}</div>
                         {% endif %}
                     </div>
 
                     <div class="mb-4">
-                        <label for="id_url_imagen" class="form-label fw-semibold">URL de la imagen</label>
+                        <label for="id_url_imagen" class="form-label">URL de la imagen</label>
                         <input type="url" name="url_imagen" id="id_url_imagen"
-                               class="form-control bg-dark text-light border-secondary {% if form.url_imagen.errors %}is-invalid{% endif %}"
-                               placeholder="https://i.imgur.com/..."
+                               class="form-control {% if form.url_imagen.errors %}is-invalid{% endif %}"
+                               placeholder="https://..."
                                value="{{ form.url_imagen.value|default:'' }}">
                         {% if form.url_imagen.errors %}
                             <div class="invalid-feedback">{{ form.url_imagen.errors|join:", " }}</div>
                         {% endif %}
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="bi bi-cloud-upload me-1"></i>Publicar
-                    </button>
+                    <button type="submit" class="btn btn-primary w-100">Publicar</button>
                 </form>
             </div>
         </div>
-
     </div>
 
-    <!-- Columna derecha: mis setups -->
     <div class="col-lg-8">
-        <h2 class="h4 fw-bold mb-3">
-            <i class="bi bi-collection text-primary me-2"></i>Mis Setups
-        </h2>
+        <div class="page-intro">
+            <h2 class="h4 mb-1">Mis setups</h2>
+            <p class="small-note mb-0">Los que has subido aparecen aca.</p>
+        </div>
 
         {% if mis_setups %}
             <div class="row row-cols-1 row-cols-md-2 g-3">
                 {% for setup in mis_setups %}
                     <div class="col">
-                        <div class="card h-100 setup-card border-secondary bg-dark">
+                        <article class="card h-100 setup-card">
                             <img src="{{ setup.url_imagen }}"
                                  class="card-img-top"
                                  alt="{{ setup.titulo }}"
-                                 onerror="this.src='https://placehold.co/600x400/222/555?text=Sin+imagen'">
+                                 onerror="this.src='https://placehold.co/600x400/e8e0d4/6f6860?text=Sin+imagen'">
                             <div class="card-body">
-                                <h6 class="card-title fw-semibold">{{ setup.titulo }}</h6>
+                                <h3 class="h6 card-title">{{ setup.titulo }}</h3>
                                 {% if setup.descripcion %}
-                                    <p class="card-text text-muted small">{{ setup.descripcion|truncatewords:15 }}</p>
+                                    <p class="card-text small-note">{{ setup.descripcion|truncatewords:18 }}</p>
                                 {% endif %}
                             </div>
-                            <div class="card-footer border-secondary">
-                                <small class="text-muted">
-                                    <i class="bi bi-calendar3 me-1"></i>{{ setup.fecha_creacion|date:"d M Y" }}
-                                </small>
-                            </div>
-                        </div>
+                            <div class="setup-meta p-3 pt-2">{{ setup.fecha_creacion|date:"d/m/Y" }}</div>
+                        </article>
                     </div>
                 {% endfor %}
             </div>
         {% else %}
             <div class="text-center py-5 empty-state">
-                <i class="bi bi-collection display-4 text-muted"></i>
-                <p class="text-muted mt-3 mb-0">Aún no has publicado ningún setup.<br>¡Usa el formulario para compartir el tuyo!</p>
+                <p class="small-note mb-0">Todavia no has publicado ningun setup.</p>
             </div>
         {% endif %}
     </div>
-
 </div>
 {% endblock %}

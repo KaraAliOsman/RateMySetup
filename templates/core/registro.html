@@ -1,32 +1,27 @@
 {% extends 'base.html' %}
 
-{% block title %}Crear Cuenta — RateMySetup{% endblock %}
+{% block title %}Crear cuenta - RateMySetup{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5">
-
-        <div class="text-center mb-4 neon-icon-wrap">
-            <i class="bi bi-person-plus-fill display-4 text-primary"></i>
-            <h1 class="h3 fw-bold mt-2">Crea tu cuenta</h1>
-            <p class="text-muted">Únete a la comunidad y comparte tu setup</p>
+    <div class="col-sm-10 col-md-8 col-lg-6">
+        <div class="mb-4">
+            <h1 class="h3 mb-2">Crear cuenta</h1>
+            <p class="small-note mb-0">Solo se necesita una cuenta para poder subir y ordenar tus setups.</p>
         </div>
 
-        <div class="card bg-dark gamer-card">
+        <div class="card">
             <div class="card-body p-4">
                 <form method="post" novalidate>
                     {% csrf_token %}
 
                     {% for field in form %}
                         <div class="mb-3">
-                            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
-                                {{ field.label }}
-                            </label>
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                             <input type="{{ field.field.widget.input_type }}"
                                    name="{{ field.html_name }}"
                                    id="{{ field.id_for_label }}"
-                                   class="form-control bg-dark text-light border-secondary {% if field.errors %}is-invalid{% endif %}"
-                                   placeholder="{{ field.label }}"
+                                   class="form-control {% if field.errors %}is-invalid{% endif %}"
                                    {% if field.value %}value="{{ field.value }}"{% endif %}>
                             {% if field.errors %}
                                 <div class="invalid-feedback">
@@ -34,23 +29,20 @@
                                 </div>
                             {% endif %}
                             {% if field.help_text %}
-                                <div class="form-text text-muted small">{{ field.help_text }}</div>
+                                <div class="form-text">{{ field.help_text }}</div>
                             {% endif %}
                         </div>
                     {% endfor %}
 
-                    <button type="submit" class="btn btn-primary w-100 py-2 mt-2">
-                        <i class="bi bi-rocket-takeoff me-2"></i>Crear mi cuenta
-                    </button>
+                    <button type="submit" class="btn btn-primary w-100 mt-2">Crear cuenta</button>
                 </form>
             </div>
         </div>
 
-        <p class="text-center text-muted mt-3">
-            ¿Ya tienes cuenta?
-            <a href="{% url 'login' %}" class="text-primary fw-semibold">Inicia sesión</a>
+        <p class="text-center small-note mt-3">
+            Si ya tienes cuenta,
+            <a href="{% url 'login' %}">entra desde aqui</a>.
         </p>
-
     </div>
 </div>
 {% endblock %}

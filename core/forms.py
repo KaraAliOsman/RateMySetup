@@ -5,7 +5,7 @@ from .models import Setup
 
 
 class RegistroForm(UserCreationForm):
-    email = forms.EmailField(required=True, label="Correo electrónico")
+    email = forms.EmailField(required=True, label="Correo electronico")
 
     class Meta:
         model = User
@@ -24,8 +24,8 @@ class SetupForm(forms.ModelForm):
         model = Setup
         fields = ('titulo', 'descripcion', 'url_imagen')
         labels = {
-            'titulo': 'Título',
-            'descripcion': 'Descripción',
+            'titulo': 'Titulo',
+            'descripcion': 'Descripcion',
             'url_imagen': 'URL de la imagen',
         }
         widgets = {
