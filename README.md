@@ -1,34 +1,21 @@
-pip install -r requirements.txt
-
-python manage.py migrate
-
-python manage.py runserver
-
-
-O SINO
-
-Instalación y ejecución
+powershell
 cd RateMySetup-main
 python -m venv venv
-Activar entorno
-
-Git Bash:
-
-source venv/Scripts/activate
-
-PowerShell:
-
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 .\venv\Scripts\Activate.ps1
-Instalar dependencias
 pip install -r requirements.txt
-
-o
-
-python -m pip install -r requirements.txt
-Base de datos
 python manage.py makemigrations
 python manage.py migrate
-Ejecutar
+python manage.py createsuperuser
 python manage.py runserver
 
+
+bash
+cd RateMySetup-main
+python -m venv venv
+source venv/Scripts/activate
+pip install -r requirements.txt
+python manage.py makemigrations
+python manage.py migrate
 python manage.py createsuperuser
+python manage.py runserver
