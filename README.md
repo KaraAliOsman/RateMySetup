@@ -1,4 +1,7 @@
-powershell
+# RateMySetup
+
+## PowerShell
+```powershell
 cd RateMySetup-main
 python -m venv venv
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
@@ -8,9 +11,10 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
+```
 
-
-bash
+## Git Bash
+```bash
 cd RateMySetup-main
 python -m venv venv
 source venv/Scripts/activate
@@ -19,3 +23,4 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
+```
