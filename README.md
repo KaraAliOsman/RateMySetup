@@ -31,3 +31,28 @@ python manage.py runserver
 .\venv\Scripts\Activate.ps1
 python manage.py runserver
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+como ultimo
+
+```
+O en Git Bash:
+python -m venv venv
+source venv/Scripts/activate
+Instala las dependencias:
+pip install -r requirements.txt
+Ejecuta las migraciones:
+python manage.py migrate
+Inicia el servidor:
+python manage.py runserver
+```
