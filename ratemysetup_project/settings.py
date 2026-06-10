@@ -1,7 +1,12 @@
 import os
 from pathlib import Path
 
+from django.contrib.messages import constants as message_constants
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Mapea el nivel ERROR de los mensajes a la clase 'danger' de Bootstrap.
+MESSAGE_TAGS = {message_constants.ERROR: 'danger'}
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-secret-key')
 DEBUG = True
@@ -75,6 +80,12 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+
+# Archivos subidos por los usuarios (imagenes de los setups).
+# MEDIA_URL es la ruta publica; MEDIA_ROOT es la carpeta fisica en disco.
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login/'

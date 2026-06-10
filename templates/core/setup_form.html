@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if modo == 'editar' %}Editar setup{% else %}Publicar setup{% endif %} - RateMySetup{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9 col-xl-8">
+        <div class="mb-4">
+            <h1 class="section-title mb-1">
+                <span class="bar">//</span> {% if modo == 'editar' %}Editar setup{% else %}Publicar setup{% endif %}
+            </h1>
+            <p class="small-note mb-0">Completa los datos. Mientras mas detalle del hardware, mejor.</p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <!-- ===== Informacion general ===== -->
+            <fieldset class="fieldset-neon">
+                <legend>Informacion general</legend>
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <label for="{{ form.titulo.id_for_label }}" class="form-label">{{ form.titulo.label }}</label>
+                        {{ form.titulo }}
+                        {% if form.titulo.errors %}<div class="text-danger small mt-1">{{ form.titulo.errors|join:", " }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <label for="{{ form.categoria.id_for_label }}" class="form-label">{{ form.categoria.label }}</label>
+                        {{ form.categoria }}
+                        {% if form.categoria.errors %}<div class="text-danger small mt-1">{{ form.categoria.errors|join:", " }}</div>{% endif %}
+                    </div>
+                    <div class="col-12">
+                        <label for="{{ form.descripcion.id_for_label }}" class="form-label">{{ form.descripcion.label }}</label>
+                        {{ form.descripcion }}
+                        {% if form.descripcion.errors %}<div class="text-danger small mt-1">{{ form.descripcion.errors|join:", " }}</div>{% endif %}
+                    </div>
+                    <div class="col-12">
+                        <label for="{{ form.imagen.id_for_label }}" class="form-label">{{ form.imagen.label }}</label>
+                        {{ form.imagen }}
+                        <div class="form-text small-note">Sube una foto de tu setup desde tu PC (JPG, PNG...).</div>
+                        {% if form.imagen.errors %}<div class="text-danger small mt-1">{{ form.imagen.errors|join:", " }}</div>{% endif %}
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- ===== RAM ===== -->
+            <fieldset class="fieldset-neon">
+                <legend>Memoria RAM</legend>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="{{ form.ram_tamano.id_for_label }}" class="form-label">Tamano</label>
+                        {{ form.ram_tamano }}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.ram_frecuencia.id_for_label }}" class="form-label">Frecuencia</label>
+                        {{ form.ram_frecuencia }}
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- ===== CPU ===== -->
+            <fieldset class="fieldset-neon">
+                <legend>Procesador (CPU)</legend>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="{{ form.cpu_marca.id_for_label }}" class="form-label">Marca / Modelo</label>
+                        {{ form.cpu_marca }}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.cpu_socket.id_for_label }}" class="form-label">Socket</label>
+                        {{ form.cpu_socket }}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.cpu_frecuencia.id_for_label }}" class="form-label">Frecuencia</label>
+                        {{ form.cpu_frecuencia }}
+                    </div>
+                    <div class="col-md-6">
+                        <label for="{{ form.cpu_nucleos.id_for_label }}" class="form-label">Nucleos</label>
+                        {{ form.cpu_nucleos }}
+                        {% if form.cpu_nucleos.errors %}<div class="text-danger small mt-1">{{ form.cpu_nucleos.errors|join:", " }}</div>{% endif %}
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- ===== GPU ===== -->
+            <fieldset class="fieldset-neon">
+                <legend>Tarjeta grafica (GPU)</legend>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="{{ form.gpu_marca.id_for_label }}" class="form-label">Marca / Modelo</label>
+                        {{ form.gpu_marca }}
+                    </div>
+                    <div class="col-md-3">
+                        <label for="{{ form.gpu_frecuencia.id_for_label }}" class="form-label">Frecuencia</label>
+                        {{ form.gpu_frecuencia }}
+                    </div>
+                    <div class="col-md-3">
+                        <label for="{{ form.gpu_vram.id_for_label }}" class="form-label">VRAM</label>
+                        {{ form.gpu_vram }}
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- ===== Discos (formset) ===== -->
+            <fieldset class="fieldset-neon">
+                <legend>Almacenamiento</legend>
+                {{ formset.management_form }}
+                {% if formset.non_form_errors %}
+                    <div class="alert alert-danger py-2">{{ formset.non_form_errors }}</div>
+                {% endif %}
+
+                <div id="discos-container">
+                    {% for dform in formset %}
+                        <div class="row g-2 mb-2 align-items-end disco-row">
+                            {% for hidden in dform.hidden_fields %}{{ hidden }}{% endfor %}
+                            <div class="col-4">
+                                <label class="form-label small mb-1">Tipo</label>
+                                {{ dform.tipo }}
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small mb-1">Tamano</label>
+                                {{ dform.tamano }}
+                                {% if dform.tamano.errors %}<div class="text-danger small mt-1">{{ dform.tamano.errors|join:", " }}</div>{% endif %}
+                            </div>
+                            {% if dform.instance.pk %}
+                                <div class="col-2">
+                                    <div class="form-check mt-2">
+                                        {{ dform.DELETE }}
+                                        <label class="form-check-label small">Quitar</label>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Plantilla oculta para agregar discos dinamicamente -->
+                <template id="disco-empty">
+                    <div class="row g-2 mb-2 align-items-end disco-row">
+                        {% for hidden in formset.empty_form.hidden_fields %}{{ hidden }}{% endfor %}
+                        <div class="col-4">
+                            <label class="form-label small mb-1">Tipo</label>
+                            {{ formset.empty_form.tipo }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small mb-1">Tamano</label>
+                            {{ formset.empty_form.tamano }}
+                        </div>
+                    </div>
+                </template>
+
+                <button type="button" id="add-disco" class="btn btn-ghost btn-sm mt-1">+ Agregar disco</button>
+                <p class="small-note mb-0 mt-2">Puedes dejar filas vacias si no las necesitas.</p>
+            </fieldset>
+
+            <div class="d-flex gap-2 justify-content-end">
+                {% if modo == 'editar' %}
+                    <a href="{% url 'setup_detalle' setup.pk %}" class="btn btn-ghost">Cancelar</a>
+                {% else %}
+                    <a href="{% url 'home' %}" class="btn btn-ghost">Cancelar</a>
+                {% endif %}
+                <button type="submit" class="btn btn-neon px-4">
+                    {% if modo == 'editar' %}Guardar cambios{% else %}Publicar setup{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Agrega filas de disco dinamicamente actualizando el management form del formset.
+    (function () {
+        const addBtn = document.getElementById('add-disco');
+        const container = document.getElementById('discos-container');
+        const template = document.getElementById('disco-empty');
+        const totalForms = document.getElementById('id_discos-TOTAL_FORMS');
+        if (!addBtn || !container || !template || !totalForms) return;
+
+        addBtn.addEventListener('click', function () {
+            const index = parseInt(totalForms.value, 10);
+            const html = template.innerHTML.replace(/__prefix__/g, index);
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = html;
+            container.appendChild(wrapper.firstElementChild);
+            totalForms.value = index + 1;
+        });
+    })();
+</script>
+{% endblock %}

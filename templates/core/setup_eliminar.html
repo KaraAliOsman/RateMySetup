@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar setup - RateMySetup{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+        <div class="card p-4">
+            <h1 class="h4 mb-3">Eliminar setup</h1>
+            <p class="mb-1">Estas a punto de eliminar:</p>
+            <p class="text-neon h5 mb-3">{{ setup.titulo }}</p>
+            <p class="small-note mb-4">
+                Esta accion no se puede deshacer. Se borraran tambien sus discos,
+                calificaciones y comentarios.
+            </p>
+            <form method="post" class="d-flex gap-2 justify-content-end">
+                {% csrf_token %}
+                <a href="{% url 'setup_detalle' setup.pk %}" class="btn btn-ghost">Cancelar</a>
+                <button type="submit" class="btn btn-danger">Si, eliminar</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

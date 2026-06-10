@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ setup.titulo }} - RateMySetup{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <!-- ===== Columna izquierda: imagen + specs ===== -->
+    <div class="col-lg-7">
+        <div class="card setup-card mb-4">
+            <div class="img-wrap position-relative">
+                <img src="{{ setup.imagen.url }}" alt="{{ setup.titulo }}" style="height:360px;"
+                     onerror="this.src='https://placehold.co/800x500/0d0f13/39ff14?text=Sin+imagen'">
+                <span class="badge-cat position-absolute" style="top:.8rem; left:.8rem;">{{ setup.get_categoria_display }}</span>
+            </div>
+        </div>
+
+        <h2 class="section-title mb-3"><span class="bar">//</span> Especificaciones</h2>
+        <div class="row g-3">
+            <!-- RAM -->
+            <div class="col-md-6">
+                <div class="spec-group p-3 h-100">
+                    <h3 class="mb-2">Memoria RAM</h3>
+                    {% if setup.ram_tamano or setup.ram_frecuencia %}
+                        <div class="spec-row d-flex justify-content-between py-1"><span class="spec-key">Tamano</span><span class="spec-val">{{ setup.ram_tamano|default:"-" }}</span></div>
+                        <div class="spec-row d-flex justify-content-between py-1"><span class="spec-key">Frecuencia</span><span class="spec-val">{{ setup.ram_frecuencia|default:"-" }}</span></div>
+                    {% else %}
+                        <p class="small-note mb-0">Sin datos.</p>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- CPU -->
+            <div class="col-md-6">
+                <div class="spec-group p-3 h-100">
+                    <h3 class="mb-2">Procesador (CPU)</h3>
+                    {% if setup.cpu_marca or setup.cpu_socket or setup.cpu_frecuencia or setup.cpu_nucleos %}
+                        <div class="spec-row d-flex justify-content-between py-1"><span class="spec-key">Marca</span><span class="spec-val">{{ setup.cpu_marca|default:"-" }}</span></div>
+                        <div class="spec-row d-flex justify-content-between py-1"><span class="spec-key">Socket</span><span class="spec-val">{{ setup.cpu_socket|default:"-" }}</span></div>
+                        <div class="spec-row d-flex justify-content-between py-1"><span class="spec-key">Frecuencia</span><span class="spec-val">{{ setup.cpu_frecuencia|default:"-" }}</span></div>
+                        <div class="spec-row d-flex justify-content-between py-1"><span class="spec-key">Nucleos</span><span class="spec-val">{{ setup.cpu_nucleos|default:"-" }}</span></div>
+                    {% else %}
+                        <p class="small-note mb-0">Sin datos.</p>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- GPU -->
+            <div class="col-md-6">
+                <div class="spec-group p-3 h-100">
+                    <h3 class="mb-2">Tarjeta grafica (GPU)</h3>
+                    {% if setup.gpu_marca or setup.gpu_frecuencia or setup.gpu_vram %}
+                        <div class="spec-row d-flex justify-content-between py-1"><span class="spec-key">Marca</span><span class="spec-val">{{ setup.gpu_marca|default:"-" }}</span></div>
+                        <div class="spec-row d-flex justify-content-between py-1"><span class="spec-key">Frecuencia</span><span class="spec-val">{{ setup.gpu_frecuencia|default:"-" }}</span></div>
+                        <div class="spec-row d-flex justify-content-between py-1"><span class="spec-key">VRAM</span><span class="spec-val">{{ setup.gpu_vram|default:"-" }}</span></div>
+                    {% else %}
+                        <p class="small-note mb-0">Sin datos.</p>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Discos -->
+            <div class="col-md-6">
+                <div class="spec-group p-3 h-100">
+                    <h3 class="mb-2">Almacenamiento</h3>
+                    {% if setup.discos.all %}
+                        {% for disco in setup.discos.all %}
+                            <div class="spec-row d-flex justify-content-between py-1">
+                                <span class="spec-key">{{ disco.tipo }}</span>
+                                <span class="spec-val">{{ disco.tamano }}</span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="small-note mb-0">Sin datos.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Columna derecha: info, rating, acciones ===== -->
+    <div class="col-lg-5">
+        <h1 class="h2 mb-2">{{ setup.titulo }}</h1>
+        <p class="small-note mb-3">
+            Publicado por <span class="text-neon">&#9670; {{ setup.usuario.username }}</span>
+            el {{ setup.fecha_creacion|date:"d/m/Y" }}
+        </p>
+
+        {% if setup.descripcion %}
+            <p class="mb-4">{{ setup.descripcion|linebreaksbr }}</p>
+        {% endif %}
+
+        <!-- Promedio de calificaciones -->
+        <div class="card p-3 mb-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <div class="display-6 mb-0 text-neon" style="font-family:'Orbitron';">{{ setup.promedio_calificacion|floatformat:1 }}</div>
+                    <span class="small-note">{{ setup.total_calificaciones }} calificacion{{ setup.total_calificaciones|pluralize:"es" }}</span>
+                </div>
+                <div class="stars" style="font-size:1.6rem;">
+                    {% for i in "12345" %}{% if forloop.counter <= setup.promedio_redondeado %}<span class="on">&#9733;</span>{% else %}<span class="off">&#9733;</span>{% endif %}{% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Widget de votacion -->
+        <div class="card p-3 mb-4">
+            <h2 class="h6 mb-3">Tu calificacion</h2>
+            {% if not user.is_authenticated %}
+                <p class="small-note mb-0"><a href="{% url 'login' %}?next={{ request.path }}">Inicia sesion</a> para calificar este setup.</p>
+            {% elif es_dueno %}
+                <p class="small-note mb-0">Este setup es tuyo: no puedes calificar tu propia publicacion.</p>
+            {% else %}
+                <form method="post" action="{% url 'calificar' setup.pk %}">
+                    {% csrf_token %}
+                    <div class="rating-input mb-3">
+                        {% for n in rango_estrellas %}
+                            <input type="radio" name="puntaje" id="star{{ n }}" value="{{ n }}" {% if mi_voto == n %}checked{% endif %}>
+                            <label for="star{{ n }}" title="{{ n }} estrellas">&#9733;</label>
+                        {% endfor %}
+                    </div>
+                    <button type="submit" class="btn btn-neon btn-sm">
+                        {% if mi_voto %}Actualizar voto{% else %}Enviar voto{% endif %}
+                    </button>
+                    {% if mi_voto %}<span class="small-note ms-2">Tu voto actual: {{ mi_voto }} &#9733;</span>{% endif %}
+                </form>
+            {% endif %}
+        </div>
+
+        <!-- Acciones del dueno -->
+        {% if es_dueno %}
+            <div class="d-flex gap-2 mb-4">
+                <a href="{% url 'setup_editar' setup.pk %}" class="btn btn-ghost btn-sm">Editar</a>
+                <a href="{% url 'setup_eliminar' setup.pk %}" class="btn btn-ghost btn-sm text-danger">Eliminar</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ===== Comentarios ===== -->
+<div class="row mt-2" id="comentarios">
+    <div class="col-lg-8">
+        <h2 class="section-title mb-3"><span class="bar">//</span> Comentarios ({{ setup.comentarios.count }})</h2>
+
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'comentar' setup.pk %}" class="mb-4">
+                {% csrf_token %}
+                {{ comentario_form.texto }}
+                <div class="text-end mt-2">
+                    <button type="submit" class="btn btn-neon btn-sm">Comentar</button>
+                </div>
+            </form>
+        {% else %}
+            <p class="small-note mb-4"><a href="{% url 'login' %}?next={{ request.path }}">Inicia sesion</a> para dejar un comentario.</p>
+        {% endif %}
+
+        {% for comentario in setup.comentarios.all %}
+            <div class="card p-3 mb-2">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="text-neon fw-bold">&#9670; {{ comentario.usuario.username }}</span>
+                    <span class="small-note">{{ comentario.fecha_creacion|date:"d/m/Y H:i" }}</span>
+                </div>
+                <p class="mb-0">{{ comentario.texto|linebreaksbr }}</p>
+            </div>
+        {% empty %}
+            <div class="text-center py-4 empty-state">
+                <p class="small-note mb-0">Todavia no hay comentarios. Se el primero en opinar.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -3,48 +3,71 @@
 {% block title %}Inicio - RateMySetup{% endblock %}
 
 {% block content %}
-<div class="d-md-flex justify-content-between align-items-end page-intro">
+<div class="d-md-flex justify-content-between align-items-end mb-3">
     <div>
-        <h1 class="h3 mb-2">Setups compartidos</h1>
-        <p class="small-note mb-0">Un lugar sencillo para guardar y mirar escritorios de la clase.</p>
+        <h1 class="section-title mb-2"><span class="bar">//</span> Setups de la comunidad</h1>
+        <p class="small-note mb-0">Explora, califica y comenta los mejores escritorios. Filtra por estilo.</p>
     </div>
     <div class="mt-3 mt-md-0">
         {% if user.is_authenticated %}
-            <a href="{% url 'perfil' %}" class="btn btn-primary">Publicar setup</a>
+            <a href="{% url 'setup_nuevo' %}" class="btn btn-neon">+ Publicar setup</a>
         {% else %}
-            <a href="{% url 'registro' %}" class="btn btn-outline-primary">Crear cuenta</a>
+            <a href="{% url 'registro' %}" class="btn btn-neon">Crear cuenta</a>
         {% endif %}
     </div>
+</div>
+
+<!-- Filtros por categoria -->
+<div class="d-flex flex-wrap gap-2 mb-4">
+    <a href="{% url 'home' %}"
+       class="btn btn-sm {% if not categoria_actual %}btn-neon{% else %}btn-ghost{% endif %}">Todas</a>
+    {% for valor, etiqueta in categorias %}
+        <a href="?categoria={{ valor }}"
+           class="btn btn-sm {% if categoria_actual == valor %}btn-neon{% else %}btn-ghost{% endif %}">{{ etiqueta }}</a>
+    {% endfor %}
 </div>
 
 {% if setups %}
     <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
         {% for setup in setups %}
             <div class="col">
-                <article class="card h-100 setup-card">
-                    <img src="{{ setup.url_imagen }}"
-                         class="card-img-top"
-                         alt="{{ setup.titulo }}"
-                         onerror="this.src='https://placehold.co/600x400/e8e0d4/6f6860?text=Sin+imagen'">
-                    <div class="card-body">
-                        <h2 class="h5 card-title">{{ setup.titulo }}</h2>
-                        {% if setup.descripcion %}
-                            <p class="card-text small-note mb-0">{{ setup.descripcion|truncatewords:24 }}</p>
-                        {% endif %}
-                    </div>
-                    <div class="setup-meta d-flex justify-content-between gap-3 p-3 pt-2">
-                        <span>{{ setup.usuario.username }}</span>
-                        <span>{{ setup.fecha_creacion|date:"d/m/Y" }}</span>
-                    </div>
-                </article>
+                <a href="{% url 'setup_detalle' setup.pk %}" class="text-reset">
+                    <article class="card h-100 setup-card">
+                        <div class="img-wrap position-relative">
+                            <img src="{{ setup.imagen.url }}" alt="{{ setup.titulo }}"
+                                 onerror="this.src='https://placehold.co/600x400/0d0f13/39ff14?text=Sin+imagen'">
+                            <span class="badge-cat position-absolute" style="top:.6rem; left:.6rem;">{{ setup.get_categoria_display }}</span>
+                        </div>
+                        <div class="card-body">
+                            <h2 class="h5 card-title mb-1">{{ setup.titulo }}</h2>
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span class="stars">{% for i in "12345" %}{% if forloop.counter <= setup.promedio_redondeado %}<span class="on">&#9733;</span>{% else %}<span class="off">&#9733;</span>{% endif %}{% endfor %}</span>
+                                <span class="small-note">{{ setup.promedio_calificacion|floatformat:1 }} ({{ setup.total_calificaciones }})</span>
+                            </div>
+                            {% if setup.descripcion %}
+                                <p class="card-text small-note mb-0">{{ setup.descripcion|truncatewords:18 }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="setup-meta d-flex justify-content-between gap-3 p-3 pt-2">
+                            <span>&#9670; {{ setup.usuario.username }}</span>
+                            <span>{{ setup.fecha_creacion|date:"d/m/Y" }}</span>
+                        </div>
+                    </article>
+                </a>
             </div>
         {% endfor %}
     </div>
 {% else %}
     <div class="text-center py-5 empty-state">
-        <h2 class="h4">Todavia no hay setups</h2>
-        <p class="small-note mb-3">Cuando alguien publique uno, va a aparecer aqui.</p>
-        <a href="{% url 'registro' %}" class="btn btn-primary">Subir el primero</a>
+        <h2 class="h4">{% if categoria_actual %}No hay setups en esta categoria{% else %}Todavia no hay setups{% endif %}</h2>
+        <p class="small-note mb-3">
+            {% if categoria_actual %}Prueba con otra categoria o publica el primero.{% else %}Cuando alguien publique uno, va a aparecer aqui.{% endif %}
+        </p>
+        {% if user.is_authenticated %}
+            <a href="{% url 'setup_nuevo' %}" class="btn btn-neon">Publicar el primero</a>
+        {% else %}
+            <a href="{% url 'registro' %}" class="btn btn-neon">Crear cuenta</a>
+        {% endif %}
     </div>
 {% endif %}
 {% endblock %}

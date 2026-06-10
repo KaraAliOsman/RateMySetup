@@ -1,183 +1,281 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}RateMySetup{% endblock %}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+    <!-- Bootstrap 5 con el tema oscuro "Darkly" de Bootswatch -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/darkly/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --page-bg: #f5f1ea;
-            --paper: #fffdf8;
-            --ink: #252525;
-            --muted: #6f6860;
-            --line: #ded6ca;
-            --accent: #2f5d50;
-            --accent-dark: #24483e;
+            --neon: #39ff14;            /* verde neon principal */
+            --neon-2: #00e5ff;          /* cian de apoyo */
+            --neon-soft: rgba(57, 255, 20, .35);
+            --neon-faint: rgba(57, 255, 20, .10);
+            --bg-0: #0a0b0e;            /* fondo casi negro */
+            --bg-1: #111319;
+            --panel: #15171d;
+            --panel-2: #1b1e26;
+            --edge: #2a2f3a;
+            --text-dim: #9aa3b0;
         }
 
         body {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            background: var(--page-bg);
-            color: var(--ink);
-            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(1100px 600px at 12% -8%, rgba(57, 255, 20, .07), transparent 60%),
+                radial-gradient(900px 500px at 100% 0%, rgba(0, 229, 255, .06), transparent 55%),
+                var(--bg-0);
+            color: #e9edf1;
+            font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+            letter-spacing: .2px;
         }
 
-        main {
-            flex: 1;
+        main { flex: 1; }
+
+        h1, h2, h3, .navbar-brand {
+            font-family: 'Orbitron', sans-serif;
         }
 
-        a {
-            color: var(--accent);
-        }
+        a { color: var(--neon); text-decoration: none; }
+        a:hover { color: #b6ff9c; }
 
-        a:hover {
-            color: var(--accent-dark);
-        }
-
+        /* ---------- Navbar ---------- */
         .navbar {
-            background: var(--paper);
-            border-bottom: 1px solid var(--line);
+            background: rgba(10, 11, 14, .92) !important;
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--edge);
+            box-shadow: 0 2px 24px rgba(0, 0, 0, .6);
         }
-
         .navbar-brand {
-            font-weight: 700;
-            color: var(--ink);
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #fff !important;
+            text-shadow: 0 0 8px var(--neon-soft), 0 0 18px rgba(57, 255, 20, .25);
         }
+        .navbar-brand .accent { color: var(--neon); }
+        .nav-link { color: #c7ced6 !important; font-weight: 600; }
+        .nav-link:hover, .nav-link.active { color: var(--neon) !important; }
 
-        .nav-link {
-            color: var(--muted);
+        /* ---------- Botones neon ---------- */
+        .btn { border-radius: 8px; font-weight: 600; letter-spacing: .4px; }
+        .btn-neon {
+            color: var(--neon);
+            background: transparent;
+            border: 1px solid var(--neon);
+            box-shadow: 0 0 10px var(--neon-faint), inset 0 0 8px var(--neon-faint);
+            transition: all .18s ease;
         }
-
-        .nav-link:hover,
-        .nav-link.active {
-            color: var(--ink);
+        .btn-neon:hover, .btn-neon:focus {
+            color: #06210b;
+            background: var(--neon);
+            box-shadow: 0 0 14px var(--neon-soft), 0 0 30px var(--neon-soft);
         }
-
-        .btn {
-            border-radius: 6px;
+        .btn-ghost {
+            color: #cfd6dd;
+            border: 1px solid var(--edge);
+            background: transparent;
         }
+        .btn-ghost:hover { color: #fff; border-color: var(--neon); box-shadow: 0 0 12px var(--neon-faint); }
 
-        .btn-primary {
-            background: var(--accent);
-            border-color: var(--accent);
-        }
-
-        .btn-primary:hover,
-        .btn-primary:focus {
-            background: var(--accent-dark);
-            border-color: var(--accent-dark);
-        }
-
-        .btn-outline-primary {
-            color: var(--accent);
-            border-color: var(--accent);
-        }
-
-        .btn-outline-primary:hover,
-        .btn-outline-primary:focus {
-            background: var(--accent);
-            border-color: var(--accent);
-        }
-
-        .page-intro {
-            border-bottom: 1px solid var(--line);
-            padding-bottom: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
+        /* ---------- Tarjetas con glow neon ---------- */
         .card {
-            background: var(--paper);
-            border: 1px solid var(--line);
-            border-radius: 8px;
+            background: linear-gradient(180deg, var(--panel-2), var(--panel));
+            border: 1px solid var(--edge);
+            border-radius: 14px;
+            overflow: hidden;
         }
-
+        .setup-card {
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+            box-shadow: 0 0 0 1px rgba(57, 255, 20, .06), 0 8px 24px rgba(0, 0, 0, .45);
+        }
+        .setup-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--neon);
+            box-shadow:
+                0 0 0 1px var(--neon-soft),
+                0 0 22px rgba(57, 255, 20, .28),
+                0 14px 34px rgba(0, 0, 0, .6);
+        }
+        .setup-card .img-wrap { overflow: hidden; }
         .setup-card img {
             width: 100%;
-            height: 220px;
+            height: 210px;
             object-fit: cover;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-            background: #e8e0d4;
+            transition: transform .35s ease;
+            background: #0d0f13;
         }
+        .setup-card:hover img { transform: scale(1.06); }
 
         .setup-meta {
-            background: transparent;
-            border-top: 1px solid var(--line);
-            color: var(--muted);
+            border-top: 1px solid var(--edge);
+            color: var(--text-dim);
             font-size: .9rem;
         }
 
-        .form-control {
-            border-color: var(--line);
-            border-radius: 6px;
+        /* ---------- Badges de categoria ---------- */
+        .badge-cat {
+            display: inline-block;
+            padding: .3rem .65rem;
+            border-radius: 999px;
+            font-size: .72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            color: var(--neon);
+            border: 1px solid var(--neon-soft);
+            background: rgba(57, 255, 20, .08);
         }
 
-        .form-control:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 .2rem rgba(47, 93, 80, .14);
+        /* ---------- Estrellas ---------- */
+        .stars { font-size: 1.1rem; line-height: 1; letter-spacing: 2px; }
+        .stars .on { color: #ffd23f; text-shadow: 0 0 8px rgba(255, 210, 63, .55); }
+        .stars .off { color: #444b56; }
+
+        /* Widget interactivo de votacion (radios estilo estrellas, sin JS) */
+        .rating-input { display: inline-flex; flex-direction: row-reverse; gap: 4px; }
+        .rating-input input { display: none; }
+        .rating-input label {
+            font-size: 2rem;
+            color: #444b56;
+            cursor: pointer;
+            transition: color .12s ease, text-shadow .12s ease;
         }
+        .rating-input label:hover,
+        .rating-input label:hover ~ label,
+        .rating-input input:checked ~ label {
+            color: #ffd23f;
+            text-shadow: 0 0 10px rgba(255, 210, 63, .7);
+        }
+
+        /* ---------- Specs de hardware ---------- */
+        .spec-group {
+            background: var(--panel);
+            border: 1px solid var(--edge);
+            border-left: 3px solid var(--neon);
+            border-radius: 10px;
+        }
+        .spec-group h3 {
+            font-size: .8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--neon);
+        }
+        .spec-row { border-bottom: 1px dashed #2c313b; }
+        .spec-row:last-child { border-bottom: none; }
+        .spec-key { color: var(--text-dim); }
+        .spec-val { color: #f1f4f7; font-weight: 600; }
+
+        /* ---------- Formularios ---------- */
+        .form-control, .form-select {
+            background: #0f1116;
+            border: 1px solid var(--edge);
+            color: #e9edf1;
+        }
+        .form-control:focus, .form-select:focus {
+            background: #0f1116;
+            color: #fff;
+            border-color: var(--neon);
+            box-shadow: 0 0 0 .2rem var(--neon-faint), 0 0 12px var(--neon-faint);
+        }
+        .form-label { font-weight: 600; color: #cfd6dd; }
+
+        .fieldset-neon {
+            border: 1px solid var(--edge);
+            border-radius: 12px;
+            padding: 1.1rem 1.2rem 1.2rem;
+            margin-bottom: 1.25rem;
+            background: rgba(21, 23, 29, .6);
+        }
+        .fieldset-neon legend {
+            float: none;
+            width: auto;
+            padding: 0 .55rem;
+            margin-left: .4rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: .82rem;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--neon);
+        }
+
+        .section-title {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1.4rem;
+        }
+        .section-title .bar { color: var(--neon); }
 
         .profile-initial {
-            width: 64px;
-            height: 64px;
+            width: 72px; height: 72px;
             border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: #e1d8ca;
-            color: var(--accent-dark);
-            font-size: 1.75rem;
-            font-weight: 700;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: radial-gradient(circle at 30% 30%, rgba(57,255,20,.25), #15171d);
+            border: 1px solid var(--neon-soft);
+            color: var(--neon);
+            font-size: 1.9rem; font-weight: 800;
+            box-shadow: 0 0 18px var(--neon-faint);
+            font-family: 'Orbitron', sans-serif;
         }
 
         .empty-state {
-            border: 1px dashed #c8beb1;
-            border-radius: 8px;
-            background: rgba(255, 253, 248, .55);
+            border: 1px dashed #39414e;
+            border-radius: 14px;
+            background: rgba(21, 23, 29, .5);
         }
+        .small-note { color: var(--text-dim); }
+        .text-neon { color: var(--neon); }
 
-        .small-note {
-            color: var(--muted);
-            font-size: .95rem;
+        footer {
+            border-top: 1px solid var(--edge);
+            color: var(--text-dim);
+            font-size: .85rem;
         }
+        ::selection { background: var(--neon-soft); color: #06210b; }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg">
+<nav class="navbar navbar-expand-lg sticky-top">
     <div class="container">
-        <a class="navbar-brand" href="{% url 'home' %}">RateMySetup</a>
+        <a class="navbar-brand" href="{% url 'home' %}">Rate<span class="accent">My</span>Setup</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navMain">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">
-                        Inicio
-                    </a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Inicio</a>
                 </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'setup_nuevo' %}active{% endif %}" href="{% url 'setup_nuevo' %}">Publicar</a>
+                    </li>
+                {% endif %}
             </ul>
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'perfil' %}active{% endif %}" href="{% url 'perfil' %}">
-                            {{ user.username }}
+                            &#9670; {{ user.username }}
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Salir</a>
+                        <a class="btn btn-ghost btn-sm ms-lg-2 my-1" href="{% url 'logout' %}">Salir</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'login' %}">Entrar</a>
                     </li>
                     <li class="nav-item">
-                        <a class="btn btn-primary btn-sm ms-lg-2 my-1" href="{% url 'registro' %}">Crear cuenta</a>
+                        <a class="btn btn-neon btn-sm ms-lg-2 my-1" href="{% url 'registro' %}">Crear cuenta</a>
                     </li>
                 {% endif %}
             </ul>
@@ -198,6 +296,13 @@
         {% block content %}{% endblock %}
     </div>
 </main>
+
+<footer class="py-3 mt-4">
+    <div class="container d-flex justify-content-between flex-wrap gap-2">
+        <span>Rate<span class="text-neon">My</span>Setup</span>
+        <span class="small-note">Comparte tu setup. Califica el de los demas.</span>
+    </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 {% block extra_js %}{% endblock %}
